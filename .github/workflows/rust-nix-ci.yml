@@ -18,11 +18,16 @@ on:
         required: false
         type: string
         default: 'stable'
-      os-matrix:
-        description: 'JSON array of OS to test on'
+      runs-on:
+        description: 'Runner label to use (self-hosted or ubuntu-latest)'
         required: false
         type: string
-        default: '["ubuntu-latest", "macos-latest"]'
+        default: 'self-hosted'
+      os-matrix:
+        description: 'JSON array of OS to test on (ignored when runs-on is self-hosted)'
+        required: false
+        type: string
+        default: '["self-hosted"]'
 
 jobs:
   nix-check:
@@ -77,7 +82,7 @@ jobs:
     name: Code Coverage
     if: inputs.enable-coverage
     needs: nix-check
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -103,7 +108,7 @@ jobs:
     name: Benchmarks
     if: inputs.enable-benchmarks
     needs: nix-check
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -121,7 +126,7 @@ jobs:
     name: CI Results
     if: always()
     needs: [nix-check, coverage, benchmarks]
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - name: Check results
         run: |

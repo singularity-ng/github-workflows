@@ -23,6 +23,11 @@ on:
         required: false
         type: string
         default: ''
+      runs-on:
+        description: 'Runner label to use (self-hosted or ubuntu-latest)'
+        required: false
+        type: string
+        default: 'self-hosted'
     secrets:
       CRATES_TOKEN:
         description: 'crates.io API token (required if enable-crate-publish is true)'
@@ -34,7 +39,7 @@ on:
 jobs:
   validate:
     name: Validate Release
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -76,7 +81,7 @@ jobs:
     name: Generate Release Reports
     if: inputs.enable-release-reports
     needs: validate
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - uses: actions/checkout@v4
 
@@ -97,7 +102,7 @@ jobs:
   build-crate-package:
     name: Build Crate Package
     needs: validate
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - uses: actions/checkout@v4
 
@@ -116,7 +121,7 @@ jobs:
     name: Publish to crates.io
     if: inputs.enable-crate-publish
     needs: [validate, build-crate-package]
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - uses: actions/checkout@v4
 
@@ -192,7 +197,7 @@ jobs:
     name: Create GitHub Release
     needs: [validate, generate-reports, build-crate-package]
     if: always() && needs.validate.result == 'success' && needs.build-crate-package.result == 'success'
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - uses: actions/checkout@v4
 
@@ -242,7 +247,7 @@ jobs:
   notify:
     name: Notify Release
     needs: [validate, create-release]
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     if: always()
     steps:
       - name: Send notification
