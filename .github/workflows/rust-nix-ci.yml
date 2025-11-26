@@ -19,15 +19,15 @@ on:
         type: string
         default: 'stable'
       runs-on:
-        description: 'Runner label to use (self-hosted or ubuntu-latest)'
+        description: 'Runner label to use (singularity, flakecache, or ubuntu-latest)'
         required: false
         type: string
-        default: 'self-hosted'
+        default: 'singularity'
       os-matrix:
-        description: 'JSON array of OS to test on (ignored when runs-on is self-hosted)'
+        description: 'JSON array of OS to test on (ignored when using self-hosted runners)'
         required: false
         type: string
-        default: '["self-hosted"]'
+        default: '["singularity"]'
 
 jobs:
   nix-check:

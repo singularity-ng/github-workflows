@@ -24,10 +24,10 @@ on:
         type: string
         default: ''
       runs-on:
-        description: 'Runner label to use (self-hosted or ubuntu-latest)'
+        description: 'Runner label to use (singularity, flakecache, or ubuntu-latest)'
         required: false
         type: string
-        default: 'self-hosted'
+        default: 'singularity'
     secrets:
       CRATES_TOKEN:
         description: 'crates.io API token (required if enable-crate-publish is true)'
